@@ -3,26 +3,6 @@
 
 {% block content %}
 
-<!-- Sidebar for Projects -->
-<!--<aside id="sidebar" class="sidebar">-->
-<!--    <ul class="sidebar-nav" id="sidebar-nav">-->
-<!--        <li class="nav-item">-->
-<!--            <a class="nav-link" href="#" id="dashboard-button">-->
-<!--                <i class="bi bi-grid"></i><span>Dashboard</span>-->
-<!--            </a>-->
-<!--        </li>-->
-<!--        <ul id="project-list" class="nav-content">-->
-<!--            {% for project in projects %}-->
-<!--            <li>-->
-<!--                <a href="{% url 'project_details' project.id %}" class="project-link">-->
-<!--                    <i class="bi bi-circle"></i><span>{{ project.name }}</span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            {% endfor %}-->
-<!--        </ul>-->
-<!--    </ul>-->
-<!--</aside>-->
-<!-- Main Dashboard with Total Land Count -->
 <main id="main" class="main">
     <div class="pagetitle text-center">
         <h1>Dashboard</h1>
@@ -54,15 +34,15 @@
                 {% endfor%}
                 <p>Total Land Area: <strong>{{ project.total_land_area|default:"0" }}</strong></p>
 
-<!--                 {% if project.exceeded_flag %}-->
-<!--                    <div class="alert alert-danger text-center">-->
-<!--                        🚩 Fiscal Year Ended-->
-<!--                    </div>-->
-<!--                {% elif project.near_end_flag %}-->
-<!--                    <div class="alert alert-warning text-center">-->
-<!--                        ⚠️ Near Fiscal Year End-->
-<!--                    </div>-->
-<!--                {% endif %}-->
+                 {% if project.exceeded_flag %}
+                    <div class="alert alert-danger text-center">
+                        🚩 Fiscal Year Ended
+                    </div>
+                {% elif project.near_end_flag %}
+                    <div class="alert alert-warning text-center">
+                        ⚠️ Near Fiscal Year End
+                    </div>
+                {% endif %}
 
                 <a href="{% url 'project_details' project.id %}" class="btn btn-primary">View Details</a>
             </div>
@@ -71,33 +51,7 @@
     {% endfor %}
 </div>
 
-<!--        <div class="row">-->
-<!--            {% for project in projects %}-->
-<!--            <div class="col-md-4">-->
-<!--                <div class="card shadow-lg border border-primary">-->
-<!--                    <div class="card-body">-->
-<!--                        <h5 class="card-title text-center">{{ project.Project_name }}</h5>-->
-<!--                        <p class="fw-4">Address: {{ project.Address}}</p>-->
-<!--                        <p>Total Land Area: <strong>{{ project.total_land_area|default:"0" }}</strong></p>-->
-<!--                        <a href="{% url 'project_details' project.id %}" class="btn btn-primary">View Details</a>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--            {% endfor %}-->
-<!--        </div>-->
     </section>
-    <!--    <section class="section dashboard">-->
-    <!--        <div class="row">-->
-    <!--            <div class="col-12">-->
-    <!--                <div class="card">-->
-    <!--                    <div class="card-body">-->
-    <!--                        <h5 class="card-title text-center">Total Land Area Count: <span>{{ total_land_count }}</span></h5>-->
-    <!--                        <p class="text-center">Select a project to view its details.</p>-->
-    <!--                    </div>-->
-    <!--                </div>-->
-    <!--            </div>-->
-    <!--        </div>-->
-    <!--    </section>-->
 </main>
 {% endblock content %}
 

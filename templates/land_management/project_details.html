@@ -22,10 +22,10 @@
             <div class="card recent-sales overflow-auto shadow-lg border border-primary">
                 <div class="card-body">
                     <h4 class="card-title text-center">Project Name: <span class="fs-5 fw-bold">{{ project.Project_name }}</span></h4>
-                    <h4 class="text-center">Address: <span>{{ project.Address }}</span></h4>
+                    <h4 class="text-center" style="font-size:20px">Address: <span>{{ project.Address }}</span></h4>
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-sm text-center border border-secondary">
-                            <thead class="border border-dark align-middle" style="white-space: nowrap; font-size:12px">
+                            <thead class="border border-dark align-middle" style="white-space: nowrap; ">
                             <tr>
                                 <th rowspan="2" data-sortable="true">SL</th>
                                 <th rowspan="2" data-sortable="true">File Number</th>
@@ -112,7 +112,7 @@
                                 <td class="text-center">{{ detail.dag_bs_brs }}</td>
                                 <td class="text-center">{{ detail.dag_city_jorip }}</td>
                                 <td class="text-center">{{ detail.type_of_land }}</td>
-                                <td class="text-center" title="{% if detail.khajana_year %}Fiscal Year: {{ detail.khajana_year.fiscal_year }} | End Date: {{ detail.khajana_year.end_date }}{% else %}No Fiscal Year Info{% endif %}">{{ detail.khajana_status }}</td>
+                                <td class="text-center" title="{% if detail.khajana_year %} Paid for : {{ detail.khajana_year.fiscal_year }} | End Date: {{ detail.khajana_year.end_date }}{% else %}No Khajana Status Found{% endif %}">{{ detail.khajana_status }}</td>
                                 <td class="text-center">{{ detail.mortgage_bank_name }}</td>
                                 <td class="text-center">
                                     {% if detail.mortgage_deed %}
