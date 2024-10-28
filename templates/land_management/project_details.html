@@ -1,0 +1,225 @@
+{% extends './base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Main Section for Project Details -->
+<main id="main" class="main">
+<!--    <div class="pagetitle">-->
+<!--        <h1>{{ project.Project_name }} Details</h1>-->
+<!--    </div>-->
+    {% if near_end_flag %}
+    <div class="alert alert-warning text-center mt-3" role="alert">
+        <strong>Note:</strong> The fiscal year for this project is nearing its end.
+    </div>
+    {% elif exceeded_flag %}
+    <div class="alert alert-danger text-center mt-3" role="alert">
+        <strong>Warning:</strong> The fiscal year for this project has already ended.
+    </div>
+    {% endif %}
+    <section class="section">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto shadow-lg border border-primary">
+                <div class="card-body">
+                    <h4 class="card-title text-center">Project Name: <span class="fs-5 fw-bold">{{ project.Project_name }}</span></h4>
+                    <h4 class="text-center">Address: <span>{{ project.Address }}</span></h4>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-sm text-center border border-secondary">
+                            <thead class="border border-dark align-middle" style="white-space: nowrap; font-size:12px">
+                            <tr>
+                                <th rowspan="2" data-sortable="true">SL</th>
+                                <th rowspan="2" data-sortable="true">File Number</th>
+                                <th rowspan="2" data-sortable="true">Deed Number</th>
+                                <th rowspan="2" data-sortable="true">Registration Date</th>
+                                <th colspan="3">Mutation Status</th>
+                                <th rowspan="2" data-sortable="true">Last Seller</th>
+                                <th rowspan="2" data-sortable="true">Buyer in Favor of Radiant</th>
+                                <th rowspan="2" data-sortable="true">Name of the Person as Buyer</th>
+                                <th rowspan="2" data-sortable="true">Type of Deed</th>
+                                <th rowspan="2" data-sortable="true" >Land Area in Decimal</th>
+                                <th rowspan="2" data-sortable="true">Deed Value</th>
+                                <th rowspan="2" data-sortable="true">Purchase Value</th>
+                                <th rowspan="2" data-sortable="true">Mouja</th>
+                                <th colspan="5">Khatian</th>
+                                <th colspan="5">Dag Number</th>
+                                <th rowspan="2" data-sortable="true">Type of Land</th>
+                                <th rowspan="2" data-sortable="true">Khajana Status</th>
+                                <th colspan="4">Mortgage Status</th>
+                                <th rowspan="2" data-sortable="true">Remarks</th>
+                            </tr>
+                            <tr>
+                                <!-- Sub Headers for Mutation Status -->
+                                <th>Number</th>
+                                <th>Date</th>
+                                <th>DCR</th>
+
+                                <!-- Sub Headers for Khatian -->
+                                <th>CS</th>
+                                <th>SA</th>
+                                <th>RS</th>
+                                <th>BS/BRS</th>
+                                <th>City Jorip</th>
+
+                                <!-- Sub Headers for Dag Number -->
+                                <th>CS</th>
+                                <th>SA</th>
+                                <th>RS</th>
+                                <th>BS/BRS</th>
+                                <th>City Jorip</th>
+
+                                <!-- Sub Headers for Mortgage Status -->
+                                <th>Name of Bank</th>
+                                <th>Mortgage Deed</th>
+                                <th>Poa Deeds</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for detail in project.detail_set.all %}
+                            <tr class="text-center align-middle fs {% if detail.khajana_year and detail.khajana_year.end_date <= two_months_from_now and detail.khajana_year.end_date >= today %}table-warning{% elif detail.khajana_year and detail.khajana_year.end_date < today %}table-danger{% endif %}" style="white-space: nowrap;">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ detail.file_number }}</td>
+                                <td>{{ detail.deed_number }}</td>
+                                <td class="text-center">{{ detail.registration_date }}</td>
+                                <td class="text-center">{{ detail.mutation_status_number }}</td>
+                                <td class="text-center">{{ detail.mutation_status_date }}</td>
+                                <td class="text-center">
+                                    {% if detail.mutation_status_dcr %}
+                                    <a href="#" data-file="{{ detail.mutation_status_dcr.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.mutation_status_dcr.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ detail.last_seller }}</td>
+                                <td class="text-center">{{ detail.buyer }}</td>
+                                <td class="text-center">{{ detail.name_of_buyer }}</td>
+                                <td class="text-center">{{ detail.type_of_deed }}</td>
+                                <td class="text-center">{{ detail.land_area_in_decimal }}</td>
+                                <td class="text-center">{{ detail.deed_value }}</td>
+                                <td class="text-center">{{ detail.purchase_value }}</td>
+                                <td class="text-center">{{ detail.mouja }}</td>
+                                <td class="text-center">{{ detail.khatian_cs }}</td>
+                                <td class="text-center">{{ detail.khatian_sa }}</td>
+                                <td class="text-center">{{ detail.khatian_rs }}</td>
+                                <td class="text-center">{{ detail.khatian_bs_brs }}</td>
+                                <td class="text-center">{{ detail.khatian_city_jorip }}</td>
+                                <td class="text-center">{{ detail.dag_cs }}</td>
+                                <td class="text-center">{{ detail.dag_sa }}</td>
+                                <td class="text-center">{{ detail.dag_rs }}</td>
+                                <td class="text-center">{{ detail.dag_bs_brs }}</td>
+                                <td class="text-center">{{ detail.dag_city_jorip }}</td>
+                                <td class="text-center">{{ detail.type_of_land }}</td>
+                                <td class="text-center" title="{% if detail.khajana_year %}Fiscal Year: {{ detail.khajana_year.fiscal_year }} | End Date: {{ detail.khajana_year.end_date }}{% else %}No Fiscal Year Info{% endif %}">{{ detail.khajana_status }}</td>
+                                <td class="text-center">{{ detail.mortgage_bank_name }}</td>
+                                <td class="text-center">
+                                    {% if detail.mortgage_deed %}
+                                    <a href="#" data-file="{{ detail.mortgage_deed.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.mortgage_deed.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{% if detail.mortgage_deed %}
+                                    <a href="#" data-file="{{ detail.mortgage_poa_deeds.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.mortgage_poa_deeds.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ detail.mortgage_date }}</td>
+                                <td class="text-center">{{ detail.remarks }}</td>
+                            </tr>
+                            {% endfor %}
+
+                            </tbody>
+                            <tfoot class="border-dark">
+                            <tr>
+                                <td colspan="11" class="text-right"><strong>Total Land Area (in Decimal):</strong></td>
+                                <td class="text-center"><strong>{{ total_land_area }}</strong></td>
+                                <td colspan="22"></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="fileViewerModal" tabindex="-1" role="dialog"
+                     aria-labelledby="fileViewerModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="fileViewerModalLabel"></h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <iframe id="viewer" class="viewer" src="{{ request.build_absolute_uri }}" style="width: 100%; height: 500px;"
+                                        frameborder="0" type="application/pdf"></iframe>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="downloadCurrentFile()">Download
+                                    PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<!-- Add jQuery and Bootstrap scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!--<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"></script>-->
+<script>
+    let currentFile = "";
+    let viewer = "";
+
+    function showFile(event) {
+        event.preventDefault();
+        const filePath = event.target.getAttribute('data-file');
+        const viewer = document.getElementById('viewer');
+        console.log(filePath);
+        // Display the file in the viewer iframe
+        viewer.src = filePath;
+        currentFile = filePath;  // Store the current file path for downloading
+        console.log(filePath);
+        // Show the modal using Bootstrap's modal method
+        var fileViewerModal = new bootstrap.Modal(document.getElementById('fileViewerModal'), {
+            keyboard: false
+        });
+        console.log(fileViewerModal);
+        fileViewerModal.show();  // Display the modal
+    }
+
+    function downloadFile(filePath) {
+        const link = document.createElement('a');
+        link.href = filePath;
+        link.download = filePath.split('/').pop(); // Extract file name from the path
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function downloadCurrentFile() {
+        if (currentFile) {
+            downloadFile(currentFile);
+        } else {
+            alert("No file is currently being viewed.");
+        }
+    }
+</script>
+
+{% endblock content %}
+
+{% include './assets/component/footer.html' %}
