@@ -5,6 +5,7 @@
 
 <!-- Main Section for Project Details -->
 <main id="main" class="main">
+
 <!--    <div class="pagetitle">-->
 <!--        <h1>{{ project.Project_name }} Details</h1>-->
 <!--    </div>-->
@@ -22,9 +23,9 @@
             <div class="card recent-sales overflow-auto shadow-lg border border-primary">
                 <div class="card-body">
                     <h4 class="card-title text-center">Project Name: <span class="fs-5 fw-bold">{{ project.Project_name }}</span></h4>
-                    <h4 class="text-center" style="font-size:20px">Address: <span>{{ project.Address }}</span></h4>
+                    <h5 class="text-center" style="font-size:20px">Address: <span>{{ project.Address }}</span></h5>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-sm text-center border border-secondary">
+                        <table class="table table-bordered table-sm text-center border border-secondary">
                             <thead class="border border-dark align-middle" style="white-space: nowrap; ">
                             <tr>
                                 <th rowspan="2" data-sortable="true">SL</th>
@@ -76,7 +77,11 @@
                             </thead>
                             <tbody>
                             {% for detail in project.detail_set.all %}
-                            <tr class="text-center align-middle fs {% if detail.khajana_year and detail.khajana_year.end_date <= two_months_from_now and detail.khajana_year.end_date >= today %}table-warning{% elif detail.khajana_year and detail.khajana_year.end_date < today %}table-danger{% endif %}" style="white-space: nowrap;">
+                            <tr class="text-center text-nowrap align-middle {% if detail.exceeded_flag %} bg-danger text-white
+    {% elif detail.near_end_flag %} bg-warning
+    {% endif %}"
+     style="{% if detail.exceeded_flag %} background-color: #dc3545!important; color: white!important; {% elif detail.near_end_flag %} background-color: #ffc107!important; color: black!important; {% endif %}" >
+<!--                                {{ detail.exceeded_flag }} | {{ detail.near_end_flag }}|{{ fiscal_year }}-->
                                 <td>{{ forloop.counter }}</td>
                                 <td>{{ detail.file_number }}</td>
                                 <td>{{ detail.deed_number }}</td>

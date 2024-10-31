@@ -34,15 +34,15 @@
                 {% endfor%}
                 <p>Total Land Area: <strong>{{ project.total_land_area|default:"0" }}</strong></p>
 
-                 {% if project.exceeded_flag %}
-                    <div class="alert alert-danger text-center">
-                        🚩 Fiscal Year Ended
-                    </div>
-                {% elif project.near_end_flag %}
-                    <div class="alert alert-warning text-center">
-                        ⚠️ Near Fiscal Year End
-                    </div>
-                {% endif %}
+<!--                 {% if project.exceeded_flag %}-->
+<!--                    <div class="alert alert-danger text-center">-->
+<!--                        🚩 Fiscal Year Ended-->
+<!--                    </div>-->
+<!--                {% elif project.near_end_flag %}-->
+<!--                    <div class="alert alert-warning text-center">-->
+<!--                        ⚠️ Near Fiscal Year End-->
+<!--                    </div>-->
+<!--                {% endif %}-->
 
                 <a href="{% url 'project_details' project.id %}" class="btn btn-primary">View Details</a>
             </div>

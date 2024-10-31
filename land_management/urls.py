@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import home_view, login_view, index_view, logout_view, project_detail_view,download_file_view
+from .views import home_view, login_view, index_view, logout_view, project_detail_view,download_file_view, filter_districts, filter_upazillas
 from django.contrib.auth.views import LogoutView
 from . import views
 
@@ -12,4 +12,6 @@ urlpatterns = [
     path('download/<int:pk>/', download_file_view, name='download_file'),
     # path('logout/', LogoutView.as_view(next_page='login'), name='logout'),
     path('logout/', logout_view, name='logout'),
+    path('filter_districts/', filter_districts, name='filter_districts'),
+    path('filter_upazillas/', filter_upazillas, name='filter_upazillas'),
 ]

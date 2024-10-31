@@ -2,11 +2,22 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
-from .models import Project, Detail, Fiscal_Year
+from .models import Project, Detail, Fiscal_Year, District,Upazilla,Division
 from django.http import JsonResponse, FileResponse, Http404
 from django.views.decorators.clickjacking import xframe_options_exempt
 from datetime import datetime, timedelta
+import pprint
+  # This will show all attributes in the detail object
 
+def filter_districts(request):
+    division_id = request.GET.get('division')
+    districts = District.objects.filter(DivisionCode_id=division_id).values('DistrictCode', 'DistrictName')
+    return JsonResponse(list(districts), safe=False)
+
+def filter_upazillas(request):
+    district_id = request.GET.get('district')
+    upazillas = Upazilla.objects.filter(DistrictCode_id=district_id).values('UpazillaCode', 'UpazillaName')
+    return JsonResponse(list(upazillas), safe=False)
 
 def home_view(request):
     return redirect('login')
@@ -30,21 +41,15 @@ def index_view(request):
     today = datetime.now().date()
     two_months_from_now = today + timedelta(days=60)
 
-    # Fetch all projects and annotate total land area
     projects = Project.objects.all().annotate(total_land_area=Sum('detail__land_area_in_decimal'))
 
-    # Check for fiscal years ending within the next two months
-    for project in projects:
-        # Get all detail instances related to the project
-        detail_list = project.detail_set.all()
-        # Extract fiscal years from details
-        fiscal_years = [detail.khajana_year for detail in detail_list if detail.khajana_year]
 
-        # Check if any fiscal year ends within the next two months
+    for project in projects:
+        detail_list = project.detail_set.all()
+        fiscal_years = [detail.khajana_year for detail in detail_list if detail.khajana_year]
         project.near_end_flag = any(fy.end_date <= two_months_from_now and fy.end_date >= today for fy in fiscal_years)
 
         project.exceeded_flag = any(fy.end_date < today for fy in fiscal_years)
-    # Calculate the total land count
     total_land_count = Detail.objects.aggregate(total_land=Sum('land_area_in_decimal'))['total_land'] or 0
 
     return render(request, 'land_management/index.html', {
@@ -59,8 +64,21 @@ def index_view(request):
 def project_detail_view(request, project_id):
     project = get_object_or_404(Project, id=project_id)
     projects = Project.objects.all()
-    detail_list = project.detail_set.all()  # Fetch all detail related to the project
-    # Calculate the total land area
+    detail_list = project.detail_set.all()
+    today = datetime.now().date()
+    two_months_from_now = today + timedelta(days=60)
+
+    # Calculate fiscal year flags for each detail
+    for detail in detail_list:
+        fiscal_years = [detail.khajana_year for detail in detail_list if detail.khajana_year]
+        pprint.pprint(detail.__dict__)
+        if detail.khajana_year and detail.khajana_year.end_date:
+            end_date = detail.khajana_year.end_date
+            detail.near_end_flag = end_date <= two_months_from_now and end_date >= today
+            detail.exceeded_flag = end_date < today
+        else:
+            detail.near_end_flag = False
+            detail.exceeded_flag = False
     total_land_area = detail_list.aggregate(total_area=Sum('land_area_in_decimal'))['total_area'] or 0
     context = {
         'project': project,
@@ -69,6 +87,7 @@ def project_detail_view(request, project_id):
         'total_land_area': total_land_area,
         'is_project_detail': True,
         'active_project_id': project_id,
+        'today':today
     }
     return render(request, 'land_management/project_details.html', context)
 

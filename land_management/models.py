@@ -8,7 +8,6 @@ class Company(models.Model):
     def __str__(self):
         return self.CompanyName
 
-
 class Deed_Type(models.Model):
     Deed_Name = models.CharField(max_length=20)
 
@@ -46,10 +45,48 @@ class Fiscal_Year(models.Model):
     #     today=datetime.now().date()
     #     two_months_from_now=today+timedelta(days=60)
     #     return today<=self.end_date <= two_months_from_now
+class Division(models.Model):
+    DivisionCode = models.CharField(max_length=2, unique=True, primary_key=True)  # Set as primary key
+    DivisionName = models.CharField(max_length=50)
 
+    def __str__(self):
+        return self.DivisionName
+
+
+class District(models.Model):
+    DivisionCode = models.ForeignKey(
+        Division,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        to_field="DivisionCode"
+    )
+    DistrictCode = models.CharField(max_length=2, unique=True, primary_key=True)  # Set as primary key
+    DistrictName = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.DistrictName
+
+
+class Upazilla(models.Model):
+    DistrictCode = models.ForeignKey(
+        District,
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+        to_field="DistrictCode"
+    )
+    UpazillaCode = models.CharField(max_length=4, unique=True, primary_key=True)  # Set as primary key
+    UpazillaName = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.UpazillaName
 class Project(models.Model):
     Project_name = models.CharField(max_length=255)
-    Address = models.CharField(max_length=100, blank=False, editable=True)
+    Division = models.ForeignKey(Division, on_delete=models.SET_NULL, null=True, blank=True)
+    District = models.ForeignKey(District, on_delete=models.SET_NULL, null=True, blank=True)
+    Upazilla = models.ForeignKey(Upazilla, on_delete=models.SET_NULL, null=True, blank=True)
+    # Address = models.CharField(max_length=100, blank=False, editable=True)
 
     def __str__(self):
         return self.Project_name
@@ -58,20 +95,29 @@ class Project(models.Model):
 class Detail(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     file_number = models.CharField(max_length=50, editable=False)
-    deed_number = models.PositiveIntegerField(max_length=50, editable=False)
+    deed_number = models.PositiveIntegerField( editable=False)
     registration_date = models.DateField( blank=True, null=True)
-    mutation_status_number = models.CharField(max_length=100, blank=True, null=True)
-    mutation_status_date = models.DateField(blank=True, null=True)
-    mutation_status_dcr = models.FileField(upload_to='mutation_status_dcr/', blank=True, null=True)
+    type_of_deed = models.ForeignKey(Deed_Type, on_delete=models.SET_NULL, null=True, blank=True)
     last_seller = models.CharField(max_length=255, blank=True)
     # buyer = models.CharField(max_length=255, blank=True, null=True)
     buyer = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True, blank=True)
     name_of_buyer = models.CharField(max_length=255, blank=True, null=True)
-    type_of_deed = models.ForeignKey(Deed_Type, on_delete=models.SET_NULL, null=True, blank=True )
-    # type_of_deed = models.CharField(max_length=100, blank=True, null=True)
+
     land_area_in_decimal = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     deed_value = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
-    purchase_value = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
+    actual_value = models.DecimalField(max_digits=15, decimal_places=2, blank=True, null=True)
+
+    # Division=models.ForeignKey(division, on_delete=models.SET_NULL, null=True, blank=True)
+    # District = models.ForeignKey(district, on_delete=models.SET_NULL, null=True, blank=True)
+    # Upazilla = models.ForeignKey(upazilla, on_delete=models.SET_NULL, null=True, blank=True)
+
+    mutation_status_number = models.CharField(max_length=100, blank=True, null=True)
+    mutation_status_date = models.DateField(blank=True, null=True)
+    mutation_status_dcr = models.FileField(upload_to='mutation_status_dcr/', blank=True, null=True)
+
+
+    # type_of_deed = models.CharField(max_length=100, blank=True, null=True)
+
     mouja = models.CharField(max_length=255, blank=False, null=False)
     khatian_cs = models.CharField(max_length=100, blank=True, null=True)
     khatian_sa = models.CharField(max_length=100, blank=True, null=True)
@@ -110,12 +156,12 @@ class Detail(models.Model):
             # Format the new file number
             self.file_number = f'D-{new_number:03}'
 
-        # Auto-increment the deed number for each details entry
-        last_deed_number = Detail.objects.filter(project=self.project).order_by('deed_number').last()
-        if last_deed_number:
-            self.deed_number = last_deed_number.deed_number + 1
-        else:
-            self.deed_number = 1  # Start from 1 if no existing deed number
+        # # Auto-increment the deed number for each details entry
+        # last_deed_number = Detail.objects.filter(project=self.project).order_by('deed_number').last()
+        # if last_deed_number:
+        #     self.deed_number = last_deed_number.deed_number + 1
+        # else:
+        #     self.deed_number = 1  # Start from 1 if no existing deed number
 
         super().save(*args, **kwargs)
 
