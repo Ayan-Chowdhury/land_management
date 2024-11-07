@@ -1,0 +1,58 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block content %}
+
+<main id="main" class="main">
+    <div class="pagetitle text-center">
+        <h1>Dashboard</h1>
+    </div>
+    <section class="section dashboard">
+        <div class="row">
+            <div class="col-12">
+                <div class="card shadow-lg border border-secondary">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">Total Land Area Count: <span>{{ total_land_count }}</span>
+                        </h5>
+                        <p class="text-center">Select a project to view its details.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Cards for each project -->
+        <div class="row">
+            {% for project in projects %}
+            <div class="col-md-4">
+                <div class="card shadow-lg border border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title text-center">{{ project.Project_name }}</h5>
+                        {% if project.detail_set.exists %}
+                        <p class="fw-2 fs-6">Total Number of Deeds: <span>{{ project.detail_set.count }}</span></p>
+                        {% else %}
+                        <p class="fw-2 fs-6">Total Number of Deeds: <span>0</span></p>
+                        {% endif %}
+                        <p>Total Land Area: <strong>{{ project.total_land_area|default:"0" }}</strong></p>
+
+                        {% if project.exceeded_flag %}
+                        <div class="alert alert-danger text-center">
+                            🚩 Fiscal Year Ended
+                        </div>
+                        {% elif project.near_end_flag %}
+                        <div class="alert alert-warning text-center">
+                            ⚠️ Near Fiscal Year End
+                        </div>
+                        {% endif %}
+
+                        <a href="{% url 'project_details' project.id %}" class="btn btn-primary">View Details</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </section>
+</main>
+{% endblock content %}
+
+{% include './assets/component/footer.html' %}

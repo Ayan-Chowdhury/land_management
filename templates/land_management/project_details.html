@@ -1,0 +1,331 @@
+{% extends './base.html' %}
+{% load static %}
+{% load custom_filters %}
+{% block content %}
+
+<!-- Main Section for Project Details -->
+<main id="main" class="main">
+
+    <!--    <div class="pagetitle">-->
+    <!--        <h1>{{ project.Project_name }} Details</h1>-->
+    <!--    </div>-->
+    {% if near_end_flag %}
+    <div class="alert alert-warning text-center mt-3" role="alert">
+        <strong>Note:</strong> The fiscal year for this project is nearing its end.
+    </div>
+    {% elif exceeded_flag %}
+    <div class="alert alert-danger text-center mt-3" role="alert">
+        <strong>Warning:</strong> The fiscal year for this project has already ended.
+    </div>
+    {% endif %}
+    <section class="section">
+        <div class="col-12">
+            <div class="card recent-sales overflow-auto shadow-lg border border-primary">
+                <div class="card-body">
+                    <h4 class="card-title text-center">Project Name: <span class="fs-5 fw-bold">{{ project.Project_name }}</span>
+                    </h4>
+                    <p class="text-center card-sub_title">Address:
+                        <span> {{project.Upazilla}}, {{ project.District }} </span></p>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-sm text-center border border-secondary table-striped">
+                            <thead class="border border-dark align-middle" style="white-space: nowrap; background-color: #ceeaf0 !important;">
+                            <tr>
+                                <th rowspan="2" data-sortable="true">SL</th>
+                                <th rowspan="2" data-sortable="true">File Number</th>
+                                <th rowspan="2" data-sortable="true">Deed Number</th>
+                                <th rowspan="2" data-sortable="true">Deed File</th>
+                                <th rowspan="2" data-sortable="true">Registration Date</th>
+                                <th rowspan="2" data-sortable="true">Type of Deed</th>
+
+                                <th rowspan="2" data-sortable="true">Last Seller</th>
+                                <th rowspan="2" data-sortable="true">Buyer in Favor of Radiant</th>
+                                <th rowspan="2" data-sortable="true">Name of the Person as Buyer</th>
+                                <th rowspan="2" data-sortable="true">Land Area in Decimal</th>
+                                <th rowspan="2" data-sortable="true">Deed Value</th>
+                                <th rowspan="2" data-sortable="true">Actual Value</th>
+                                <th colspan="5">Loacation</th>
+                                <th colspan="6">Khatian</th>
+                                <th colspan="5">Dag Number</th>
+                                <th rowspan="2" data-sortable="true">Type of Land</th>
+                                <th colspan="4">Mutation Status</th>
+                                <th rowspan="2" data-sortable="true">Khajana Status</th>
+                                <th rowspan="2">Holding Tax</th>
+                                <th rowspan="2">Service Charge</th>
+                                <th colspan="6">Mortgage Status</th>
+                                <th rowspan="2" data-sortable="true">Documents</th>
+                                <th rowspan="2" data-sortable="true">Remarks</th>
+                            </tr>
+                            <tr>
+                                <!-- Sub Headers for Location-->
+                                <th>District</th>
+                                <th>P.S.</th>
+                                <th>Mouja</th>
+                                <th>J.L. No</th>
+                                <th>MAP</th>
+
+                                <!-- Sub Headers for Khatian -->
+                                <th>CS</th>
+                                <th>SA</th>
+                                <th>RS</th>
+                                <th>BS/BRS</th>
+                                <th>City Jorip</th>
+                                <th>Khatian Document</th>
+
+                                <!-- Sub Headers for Dag Number -->
+                                <th>CS</th>
+                                <th>SA</th>
+                                <th>RS</th>
+                                <th>BS/BRS</th>
+                                <th>City Jorip</th>
+
+                                <!-- Sub Headers for Mutation Status -->
+                                <th>Number</th>
+                                <th>Date</th>
+                                <th>DCR</th>
+                                <th>DCR Document</th>
+
+                                <!-- Sub Headers for Mortgage Status -->
+                                <th>Name of Bank</th>
+                                <th>Deed Number</th>
+                                <th>Mortgage Deed</th>
+                                <th>POA Deed Number</th>
+                                <th>POA Deed</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for detail in project.detail_set.all %}
+                            <tr class="text-center text-nowrap align-middle ">
+                                <td>{{ forloop.counter }}</td>
+                                <td>{{ detail.file_number|default:'Empty' }}</td>
+                                <td>{{ detail.deed_number|default:'Empty' }}</td>
+                                <td class="text-center">{% if detail.deed_file %}
+                                    <a href="#" data-file="{{ detail.deed_file.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.deed_file.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ detail.registration_date|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.type_of_deed|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.last_seller|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.buyer|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.name_of_buyer|default:'Empty' }}</td>
+                                <td class="text-center">
+                                    {% if detail.land_area_in_decimal %}
+                                    {{ detail.land_area_in_decimal }}
+                                    {% else %}
+                                    <span>0</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if detail.deed_value %}
+                                    {{ detail.deed_value }}
+                                    {% else %}
+                                    <span>0</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{% if detail.deed_value %}
+                                    {{ detail.actual_value }}
+                                    {% else %}
+                                    <span>0</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{project.District|default:'Empty'}}</td>
+                                <td class="text-center">{{project.Upazilla|default:'Empty'}}</td>
+                                <td class="text-center">{{ detail.mouja|default:'Empty' }}</td>
+                                <td class="text-center">{{detail.jl_no|default:'Empty'}}</td>
+                                <td class="text-center">
+                                    {% if detail.map_pic %}
+                                    <a href="#" data-file="{{ detail.map_pic.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.map_pic.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+
+                                <!--Khatian Information -->
+                                <td class="text-center">{{ detail.khatian_cs|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.khatian_sa|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.khatian_rs|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.khatian_bs_brs|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.khatian_city_jorip|default:'Empty' }}</td>
+                                <td class="text-center">
+                                    {% if detail.khatian_document %}
+                                    <a href="#" data-file="{{ detail.khatian_document.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.khatian_document.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+                                <!--Khatian Information -->
+                                <td class="text-center">{{ detail.dag_cs|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.dag_sa|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.dag_rs|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.dag_bs_brs|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.dag_city_jorip|default:'Empty' }}</td>
+
+                                <td class="text-center">{{ detail.type_of_land|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.mutation_status_number|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.mutation_status_date|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.mutation_dcr_status|default:'Empty' }}</td>
+                                <td class="text-center">
+                                    {% if detail.mutation_status_dcr %}
+                                    <a href="#" data-file="{{ detail.mutation_status_dcr.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.mutation_status_dcr.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+
+
+                                <td class="text-center"
+                                    title="{% if detail.khajana_year %} Paid for : {{ detail.khajana_year.fiscal_year }} | End Date: {{ detail.khajana_year.end_date }}{% else %}No Khajana Status Found{% endif %}">
+                                    {{ detail.khajana_year|default:'Empty' }}
+                                </td>
+                                <td class="text-center">{{ detail.holding_tax|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.service_charge|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.mortgage_bank_name|default:'Empty' }}</td>
+                                <td class="text-center">{{ detail.mortgage_deed_number|default:'Empty' }}</td>
+                                <td class="text-center">
+                                    {% if detail.mortgage_deed %}
+                                    <a href="#" data-file="{{ detail.mortgage_deed.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.mortgage_deed.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ detail.mortgage_poa_deed_number|default:'Empty' }}</td>
+                                <td class="text-center">{% if detail.mortgage_deed %}
+                                    <a href="#" data-file="{{ detail.mortgage_poa_deeds.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.mortgage_poa_deeds.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ detail.mortgage_date|default:'Empty' }}</td>
+                                <td class="text-center">{% if detail.deed_file %}
+                                    <a href="#" data-file="{{ detail.deed_file.url }}"
+                                       onclick="showFile(event)">
+                                        {{ detail.deed_file.name|basename }}
+                                    </a>
+                                    {% else %}
+                                    <span>Empty</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">{{ detail.remarks|default:'Empty' }}</td>
+                            </tr>
+                            {% endfor %}
+
+                            </tbody>
+                            <tfoot class="border-dark">
+                            <tr>
+                                <td colspan="9" class="text-right"><strong>Total Land Area (in Decimal):</strong></td>
+                                <td class="text-center"><strong>{{ total_land_area }}</strong></td>
+                            </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="fileViewerModal" tabindex="-1" role="dialog"
+                     aria-labelledby="fileViewerModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="fileViewerModalLabel"></h5>
+                                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Image viewer -->
+                                <img id="imageViewer" class="viewer" src=""
+                                     style="width: 100%; height: auto; display: none;" alt="Image Preview"/>
+                                <!-- PDF viewer -->
+                                <iframe id="viewer" class="viewer" src=""
+                                        style="width: 100%; height: 500px; display: none;" frameborder="0"
+                                        type="application/pdf"></iframe>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary" onclick="downloadCurrentFile()">Download
+                                    File
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add jQuery and Bootstrap scripts -->
+                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <script>
+                    let currentFile = "";
+
+                    function showFile(event) {
+                        event.preventDefault();
+                        const filePath = event.target.getAttribute('data-file');
+                        const viewer = document.getElementById('viewer');
+                        const imageViewer = document.getElementById('imageViewer');
+                        const fileExtension = filePath.split('.').pop().toLowerCase(); // Get file extension
+
+                        console.log(filePath);
+
+                        // Check file type
+                        if (['jpg', 'jpeg', 'png'].includes(fileExtension)) {
+                            // Hide PDF viewer and show image viewer
+                            viewer.style.display = 'none';
+                            imageViewer.src = filePath; // Set image source
+                            imageViewer.style.display = 'block'; // Show image
+                        } else if (fileExtension === 'pdf') {
+                            // Hide image viewer and show PDF viewer
+                            imageViewer.style.display = 'none';
+                            viewer.src = filePath; // Set PDF source
+                            viewer.style.display = 'block'; // Show PDF
+                        }
+
+                        currentFile = filePath;  // Store the current file path for downloading
+                        console.log(currentFile);
+
+                        // Show the modal using Bootstrap's modal method
+                        var fileViewerModal = new bootstrap.Modal(document.getElementById('fileViewerModal'), {
+                            keyboard: false
+                        });
+                        fileViewerModal.show();  // Display the modal
+                    }
+
+                    function downloadFile(filePath) {
+                        const link = document.createElement('a');
+                        link.href = filePath;
+                        link.download = filePath.split('/').pop(); // Extract file name from the path
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    }
+
+                    function downloadCurrentFile() {
+                        if (currentFile) {
+                            downloadFile(currentFile);
+                        } else {
+                            alert("No file is currently being viewed.");
+                        }
+                    }
+                </script>
+
+
+
+                {% endblock content %}
+
+                {% include './assets/component/footer.html' %}

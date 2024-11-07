@@ -1,0 +1,14 @@
+fieldset {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-center;
+}
+
+fieldset .form-row {
+    width: 100%;  /* Adjust width as needed to fit more fields */
+    padding-right: 10px;
+}
+
+fieldset .form-row:last-child {
+    padding-right: 0;
+}
